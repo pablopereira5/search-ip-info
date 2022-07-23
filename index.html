@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+
+    <title>Document</title>
+    <style>
+        footer{
+            text-align: center;
+            margin-top:20px;
+            width:100%;
+            height:200px;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <form id="form">
+            <label>IP del usuario
+                <input required id="input" type="text" placeholder="Introduce aqui la IP">
+                <small>Por ejemplo: 54.85.132.205</small>
+            </label>
+            <button type="submit" id="submit">
+                Buscar información de esta IP
+            </button>
+        </form>
+        <div>
+            <pre id="results">
+
+            </pre>
+        </div>
+    </main>
+    <footer>
+        <a href="#" role="button" class="secondary outline">Pablo Pereira</a>
+        
+    </footer>
+    <script>
+        const options = {
+	method: 'GET',
+	headers: {
+		'X-RapidAPI-Key': '418dd096f5msh098481b70b97e23p1c7b41jsn9bf2d26be7e4',
+		'X-RapidAPI-Host': 'ip-geolocation-and-threat-detection.p.rapidapi.com'
+	}
+};
+
+const fetchIpInfo = ip =>{
+	return fetch(`https://ip-geolocation-and-threat-detection.p.rapidapi.com/${ip}`, options)
+	.then(res => res.json())
+	.catch(err => console.error(err))
+}
+
+const $form = document.querySelector('#form')
+
+const $input = document.querySelector('#input')
+
+const $submit = document.querySelector('#submit')
+
+const $results = document.querySelector('#results')
+
+$form.addEventListener('submit', async (event) =>{
+	event.preventDefault()
+	const {value} = $input
+	if(!value) return
+
+	$submit.setAttribute('disabled', '')
+	$submit.setAttribute('aria-busy', 'true')
+	
+	const ipInfo=  await fetchIpInfo(value)
+
+    if(ipInfo){
+        $results.innerHTML = JSON.stringify(ipInfo,null,2)
+    }
+
+	$submit.removeAttribute('disabled')
+	$submit.removeAttribute('aria-busy')
+})
+
+    </script>
+</body>
+</html>
